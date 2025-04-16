@@ -1,3 +1,4 @@
+rmarkdown::render("Maths_Coursework.Rmd", output_format = "github_document")
 ---
 title: "Essentials of Mathematics, and Statistics Coursework"
 output: html_document
@@ -171,7 +172,7 @@ library(tidyverse) #load tidyverse package for formatting, manipulating and visu
 library(MASS) #load mass package for statistical functions
 
 #load data
-load("~/Statistics_workshops/assess_data_1224.Rdata")
+load("C:/Users/amydu/OneDrive/Documents/Maths_and_stats_coursework/assess_data_1224.Rdata")
 
 idx <- 20 #assign idx to integer 20
 c_cl <- 15:30 #assign c_cl to a vector of integers from 15 to 30
@@ -359,9 +360,11 @@ How Deseq2 works:
 
 
 ```{r, warning = FALSE, message = FALSE, results = "hide"}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("DESeq2")
+if (!requireNamespace("DESeq2", quietly = TRUE)) {
+    if (!requireNamespace("BiocManager", quietly = TRUE))
+        install.packages("BiocManager")
+    BiocManager::install("DESeq2")
+}
 ```
 
 ```{r, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
