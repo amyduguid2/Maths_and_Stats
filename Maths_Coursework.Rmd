@@ -1,10 +1,13 @@
-rmarkdown::render("Maths_Coursework.Rmd", output_format = "github_document")
 ---
 title: "Essentials of Mathematics, and Statistics Coursework"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    code_folding: hide
 author: Amy Duguid
-bibliography: /opt/app-root/src/home/Statistics_workshops/references_stats_coursework.bib
-csl: /opt/app-root/src/home/Statistics_workshops/harvard-university-of-birmingham.csl
+bibliography: references_stats_coursework.bib
+csl: harvard-university-of-birmingham.csl
 ---
 
 ```{r setup, include=FALSE}
@@ -21,9 +24,18 @@ library(RColorBrewer)
 ```
 
 # Part 1: Simulate Markov Chains
-## Question 1
 
-```{r}
+##Introduction
+In this first exercise, we will look at a simple model for a hypothetical disease where there are two stages of sickness, the first where the sickness can be managed at home, and the second where the patient needs to be hospitalized. This is represented by the following Markov Chain. You will go through creating simulations based on this Markov Chain.
+
+Here is the Markov Chain for the disease, where the states are Healthy (H), Sick at home (S_0), Sick in the hospital (S_H), and the Dead state (D). The main model we will apply has the following transition probabilities:
+![Image Caption](./four_state_HMM.png)
+
+## Question 1
+Examine the following piece of code which simulates from a simplified version of the Markov Chain. This simplified version only has three states. Also, work out the values for a and b in the code below.
+![Image Caption](./three_state_HMM.png)
+
+```{r comment_HMM}
 set.seed(42) #set seed for reproducible results
 n_days <- 700 #set the number of days to 700
 
@@ -58,7 +70,9 @@ plot(1:n_days, patient_record, "l") #line plot of the stored simulation for each
 
 ## Question 2
 
-```{r}
+Extend the Markov Chain to include the state S_H (Sick in the hospital) and the transition probabilities between the states. Also, work out the values for a, b, and c in the code below. We define state 1 as H, state 2 as S_0, state 3 as S_H, and state 4 as D. Use the transition probabilities from the four-state Markov Chain above. Plot the states for a simulation for a single patient.
+
+```{r extend_HMM_four_states}
 set.seed(42) #set seed for reproducible results
 n_days <- 700 #set the number of days to 700
 
@@ -96,9 +110,10 @@ plot(1:n_days, patient_record, "l", main = "State Simulation Over 700 Days For O
 - This is because the new state SH has a higher probablity of transitioning directly to Dead state (0.05) compared to states H(0.001) and S0(0.01). 
 
 ## Question 3 
+Repeat the simulation for the four-state Markov Chain above for 1000 patients, by extending your code from the previous question or otherwise. Choose an appropriate plot to display how long a patient spends in each state, on average. Also, calculate the average time spent in each state for the 1000 patients. Explain the results and what the selected plot shows.
 
 ### Code Extended for 1000 Patients
-```{r}
+```{r extend_HMM_1000_patients }
 set.seed(42) #set seed for reproducible results
 n_days <- 700 #set the number of days to 700
 
@@ -134,7 +149,7 @@ for (patient in 1:n_patients) { #loop through each patient
 ```
 
 ### Visualising How Long a Patient Spends in Each State on Average
-```{r}
+```{r time_per_state_average}
 #average time a patient spends in each state = frequency of each state for all patients divided by number of patients
 total_time <- table(State) #table of frequency of each state from the matrix
 average_time <- total_time / n_patients #divide by total number of patients for the average
@@ -161,12 +176,22 @@ ggplot(data = average_time_df, aes(x = State, y = Freq, fill = State))+
 - This is because if the patient is healthy, there is a higher probability of staying healthy than moving to other states (0.899).
 
 ## Question 4
-Yes, you would expect to see a difference in the simulation if the starting state was changed to S0, SH, or D. This is because the transition matrix has different probabilities for each of the states moving to a different state. For example, if you start in D, the patient will remain in this state the entire time because the probability of moving to another state is 0. As the patient becomes increasingly sick and moves from H to S0 to SH, the probability of the patient immediately moving to D state increases from 0.001 to 0.01 to 0.05. If starting at S0, the patient also has a higher chance of moving to SH(0.4) than moving back to H(0.3). Therefore, I would expect the patient to reach D state in a shorter time if the model starts on S0 or SH than if the model starts on H. However, if the first state change results in H again, the simulation is more likely to end up looking similar.
+
+Q: Comment if you expect to see a difference in the simulation if the starting state is changed to S_0, S_H, or D. Explain your reasoning.
+
+A: Yes, you would expect to see a difference in the simulation if the starting state was changed to S0, SH, or D. This is because the transition matrix has different probabilities for each of the states moving to a different state. For example, if you start in D, the patient will remain in this state the entire time because the probability of moving to another state is 0. As the patient becomes increasingly sick and moves from H to S0 to SH, the probability of the patient immediately moving to D state increases from 0.001 to 0.01 to 0.05. If starting at S0, the patient also has a higher chance of moving to SH(0.4) than moving back to H(0.3). Therefore, I would expect the patient to reach D state in a shorter time if the model starts on S0 or SH than if the model starts on H. However, if the first state change results in H again, the simulation is more likely to end up looking similar.
 
 # Part 2: Data Analysis
 
 ## Question 5
-```{r}
+
+For this part of the coursework you will need the data file (assess_data_1224.Rdata), instructions to download the file can be found on the course canvas page. This file contains the following objects:
+
+Y: gene expression matrix with 4,568 genes (along the rows) and 30 samples (along the columns) from 15 tumour-normal tissue pairs.
+patient_data: data.frame with metadata for each patient.
+You will perform the analysis in two steps, first you will look at the data to identify visually any problems with the data followed by a differential expression analysis to identify genes that are differentially expressed between tumour and normal tissue using regression.
+
+```{r comment code}
 #load required packages
 library(tidyverse) #load tidyverse package for formatting, manipulating and visualising data
 library(MASS) #load mass package for statistical functions
@@ -202,14 +227,17 @@ p_val <- summary(out)$coefficients[2, 4]
 ```
 
 ## Question 6 - Quality Control
-```{r}
+
+There is one problematic sample in the data, identify the problematic sample and explain why it is problematic. Provide evidence and/or a plot to support your answer. You could consider using some statistics on the data to identify the problematic sample or any other suitable approach. 
+
+```{r find_problematic_sample}
 #find Problematic Sample
 #PCA to check for any outliers
 normalised_data <- log2(Y + 1) #normalise data for comparability
 pca <- prcomp(t(normalised_data), scale. = TRUE) #run PCA on scaled data
 ```
 
-```{r}
+```{r PCA_problematic_sample}
 #visualise the PCA results
 pca_result <- as.data.frame(pca$x) #get the coordinates of samples (scores)
 pca_result$Sample <- rownames(pca_result) #add labels to identify samples
@@ -224,7 +252,7 @@ ggplot(pca_result, aes(x = PC1, y = PC2, label = Sample)) + #plot PC1 against PC
 - The PCA shows two clear clusters (Normal and Tumour) and one sample outlier.
 - The outlier is labelled as Sample003.
 
-```{r}
+```{r boxplot_problematic_sample}
 #Further comparison to double check if Sample003 is truly the outlier:
 boxplot(normalised_data,
   main = "Distribution of Normalised Counts for Each Sample",
@@ -236,7 +264,7 @@ boxplot(normalised_data,
 - The counts for Sample003 are all zero, showing this is the problematic sample.
 - Zero values could be because of technical issues during sequencing or poor sequencing depth [@zyla_evaluation_2023].
 
-```{r}
+```{r remove_problematic_sample}
 library(dplyr)
 #Remove sample003 from the expression matrix
 qc_data <- Y[, colnames(Y) != "Sample003"]
@@ -247,8 +275,9 @@ patient_data <- patient_data %>% filter(sample_id != "Sample003")
 
 ## Question 7 - Differential Expression with a Single Covariate
 
-```{r}
+Using the code from Q5, perform a regression-based differential expression analysis between all normal and tumour samples using Poisson regression. Use the tissue type as the only covariate. Plot the appropriate log10 p-value from your analysis. 
 
+```{r DEG_analysis_single}
 #count number of rows in matrix to loop through each gene
 gene_list <- nrow(qc_data)
 
@@ -274,7 +303,7 @@ for (i in 1:gene_list) { #loop through all the genes
 ```
 
 
-```{r}
+```{r DEG_analysis_single_pvals}
 #overview of results
 summary(de_fit)
 head(p_values)
@@ -319,7 +348,7 @@ ggplot(p_val_df, aes(x = idx, y = -log10(p_values), color = Expression)) +
 - I could fix this problem by using a different distribution model (negative binomial), which is similar to poisson but includes a parameter to estimate the dispersion of data. I will do this for question 8.
 
 ### Visualising Data Overdispersion
-```{r}
+```{r data_overdispersion_summary}
 #calculate mean and variance of each gene
 mean_counts <- rowMeans(qc_data)
 var_counts <- apply(qc_data, 1, var)
@@ -331,7 +360,7 @@ dispersion
 
 The data is clearly very overdispersed because the ratio of variance to mean is much greater than one across all the genes [@openai_chatgpt_2024].
 
-```{r}
+```{r data_overdispersion_plot}
 #plot mean vs variance to visualise dispersion
 ggplot(qc_data, aes(x = mean_counts, y = var_counts)) +
   geom_point() +
@@ -348,6 +377,9 @@ ggplot(qc_data, aes(x = mean_counts, y = var_counts)) +
 - This shows the data is a good fit for the Negative Binomial generalised linear model [@love_moderated_2014].
 
 ## Question 8 - Differential Expression Analysis with Covariates Using DESEQ2
+
+Perform a regression-based analysis to identify genes differentially expressed between normal and tumour samples including the tissue variable indicating if it is tumour or normal sample. Plot the appropriate log 10p-value from your analysis.Compare the p-values with and without inclusion of the tissue type as a covariate, what do you observe? Which of the covariate has the biggest effect? Explain your answer with supporting plots, tables and further analysis if required. 
+
 
 Here, I have investigated the null hypothesis that there is no significant difference in gene expression based on tissue type (normal or tumour).
 
@@ -367,7 +399,7 @@ if (!requireNamespace("DESeq2", quietly = TRUE)) {
 }
 ```
 
-```{r, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
+```{r deseq, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
 library(DESeq2)
 
 #convert data for input to Deseq
@@ -389,7 +421,7 @@ dds_full <- DESeq(dds, fitType  = "local")
 #fittype = "local" uses local regression to calculate the dispersion parameter (not parametric).
 ```
 
-```{r, cache = TRUE}
+```{r deseq_filter_siggenes, cache = TRUE}
 #create deseq results object comaparing genes differentially expressed between tissue type using the Wald test
 result_full <- results(dds_full, contrast = c("tissue", "Tumour", "Normal")) 
 
@@ -437,7 +469,7 @@ kable(siggenes_no)
 - Adjusted p-value smaller than 0.001 means the probability this differential expression occured under the null hypothesis is 0.1%.
 - I set a strict threshold for upregulated and downregulated genes for visualisation. 
 
-```{r, warning = FALSE, message = FALSE, cache = TRUE}
+```{r plot_degs, warning = FALSE, message = FALSE, cache = TRUE}
 library(ggplot2)
 
 #plot log2FC against -log10(adjusted p value)
@@ -456,7 +488,7 @@ ggplot(result_full, aes(x = log2FoldChange, y = -log10(padj), color = Expression
 - Downregulated genes are highlighted blue.
 - Dotted lines show thresholds for upregulated and downregulated genes.
 
-```{r, warning = FALSE, message = FALSE}
+```{r heatmap_degs, warning = FALSE, message = FALSE}
 library(dplyr)
 
 #create categories for heatmap
@@ -480,7 +512,9 @@ if (!requireNamespace("pheatmap", quietly = TRUE)) {
   install.packages("pheatmap")
 }
 library(pheatmap)
+```
 
+```{r heatmap_upregulated}
 #heatmap of upregulated genes
 pheatmap(upregulated_counts ,
          cluster_rows = FALSE, #don't cluster based on genes
@@ -501,7 +535,7 @@ pheatmap(upregulated_counts ,
 - Samples have clustered clearly into tumour and normal tissue based on differential expression.
 
 
-```{r}
+```{r heatmap_downregulated}
 #heatmap of downregulated genes
 pheatmap(downregulated_counts,
          cluster_rows = FALSE, #don't cluster based on genes
@@ -522,7 +556,7 @@ pheatmap(downregulated_counts,
 - Samples have clustered clearly into tumour and normal tissue based on differential expression.
 
 ### Reduced Model without Tissue Type Covariate
-```{r, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
+```{r deseq_reduced_model, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
 dds_reduced <- DESeqDataSetFromMatrix(
     countData = qc_data,
     colData = patient_data,
@@ -531,7 +565,7 @@ dds_reduced <- DESeqDataSetFromMatrix(
 dds_reduced <- DESeq(dds_reduced, fitType  = "local")
 ```
 
-```{r}
+```{r degs_reduced_model}
 
 #create column for upregulated and downregulated genes in the reduced model
 result_reduced <- results(dds_reduced)
@@ -568,14 +602,14 @@ ggplot(result_reduced, aes(x = log2FoldChange, y = -log10(padj), color = Express
 - Reduced model shows a lot less genes upregulated/downregulated compared to the full model.
 - Visually we can see P values are much larger in the reduced model. 
 
-```{r}
+```{r reduced_model_comparison}
 sum(result_reduced$padj)
 sum(result_full$padj)
 #Sum of the P values is much lower for the full model than the reduced model.
 #This suggests the covariate tissue type has a more significant impact on the response variable.
 ```
 
-```{r}
+```{r comparing_upregulated_reduced_model}
 #adjusted p values for top 10 upregulated genes in full model
 upregulated_pvals <- upregulated %>% dplyr::select(padj) %>% format(scientific = TRUE) %>% slice_head(n = 10) 
 knitr::kable(upregulated_pvals, caption = "Table of Adjusted P Values for Upregulated Genes in Full Model")
@@ -587,7 +621,7 @@ knitr::kable(upregulated_reduced_pvals, caption = "Table of Adjusted P Values fo
 
 Adjusted p values for upregulated genes are smaller for full model, suggesting the full model provides a better prediction of the response variable than the reduced model.
 
-```{r}
+```{r comparing_downregulated_reduced_model}
 #adjusted p values for top 10 downregulated genes in full model
 downregulated_pvals <- downregulated %>% dplyr::select(padj) %>% format(scientific = TRUE) %>% slice_head(n = 10) 
 knitr::kable(downregulated_pvals, caption = "Table of Adjusted P Values for Downregulated Genes in Full Model")
@@ -614,20 +648,20 @@ Adjusted p values for downregulated genes are smaller for full model, suggesting
 - I have considered adjusted P-values of below 0.001 as significant, meaning the likelihood of observing this LRT statistic under the null hypothesis is 0.1%.
 - If a gene has an adjusted P value below 0.001, the null hypothesis is rejected for this gene.
 
-```{r, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
+```{r LRT_patientid, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
 #LRT for reduced model with only patient ID included, following Chi-squared distribution with 1 degree of freedom
 LRT <- DESeq(dds, test = "LRT", reduced=~patient_id, fitType = "local")
 LRT_result_patient <- results(LRT)
 ```
 
-```{r, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
+```{r LRT_tissue_type, warning = FALSE, message = FALSE, results = "hide", cache = TRUE}
 #LRT for reduced model with only tissue type included, following Chi-squared distribution with 14 degrees of freedom 
 LRT <- DESeq(dds, test = "LRT", reduced=~tissue, fitType = "local")
 LRT_result_tissue <- results(LRT)
 ```
 
 
-```{r}
+```{r LRT_comparison}
 #create a dataframe for LRT results of reduced model with only patientID covariate
 LRT_siggenes_tissue <- LRT_result_patient %>%
                 data.frame() %>% #convert to dataframe
@@ -654,6 +688,9 @@ kable(siggenes_df)
 - This is because there is a larger number of genes with counts significantly affected by this covariate (Padj < 0.001).
 
 ## Question 9 - Interpretation
+
+Explain the results from the differential expression analysis. What do you observe from the p-values and the effect sizes? What is the effect of including the tissue type as a covariate? What is the effect of the library size on the analysis? You don’t need to perform any further analysis.
+
 - From the differential expression analysis using DESEQ, there is a large number of differentially expressed genes between the two tissue types when using the full model (tissue type and patient ID as covariates).
 - I set a strict threshold for significance (log2FC > abs(0.4) and adjP < 0.001) because of the large number of genes with small adjusted P-values and high log-fold changes.
 - This strict threshold helps to reduce false positives with differentially expressed genes. However, the threshold could be adjusted depending on the aim of the analysis.

@@ -1,16 +1,27 @@
-
-## rmarkdown::render(“Maths_Coursework.Rmd”, output_format = “github_document”)
-
-title: “Essentials of Mathematics, and Statistics Coursework” output:
-html_document author: Amy Duguid bibliography:
-/opt/app-root/src/home/Statistics_workshops/references_stats_coursework.bib
-csl:
-/opt/app-root/src/home/Statistics_workshops/harvard-university-of-birmingham.csl
-—
+Essentials of Mathematics, and Statistics Coursework
+================
+Amy Duguid
 
 # Part 1: Simulate Markov Chains
 
+\##Introduction In this first exercise, we will look at a simple model
+for a hypothetical disease where there are two stages of sickness, the
+first where the sickness can be managed at home, and the second where
+the patient needs to be hospitalized. This is represented by the
+following Markov Chain. You will go through creating simulations based
+on this Markov Chain.
+
+Here is the Markov Chain for the disease, where the states are Healthy
+(H), Sick at home (S_0), Sick in the hospital (S_H), and the Dead state
+(D). The main model we will apply has the following transition
+probabilities: ![Image Caption](./four_state_HMM.png)
+
 ## Question 1
+
+Examine the following piece of code which simulates from a simplified
+version of the Markov Chain. This simplified version only has three
+states. Also, work out the values for a and b in the code below. ![Image
+Caption](./three_state_HMM.png)
 
 ``` r
 set.seed(42) #set seed for reproducible results
@@ -40,7 +51,7 @@ for (day in 1:n_days) { #simulate for 700 days
 plot(1:n_days, patient_record, "l") #line plot of the stored simulation for each day. 
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/comment_HMM-1.png)<!-- -->
 
 - The above line plot shows the simulation for a single patient over 700
   days based on the three-state Markov Chain Model.
@@ -52,6 +63,13 @@ plot(1:n_days, patient_record, "l") #line plot of the stored simulation for each
   for almost 600 days, then die.
 
 ## Question 2
+
+Extend the Markov Chain to include the state S_H (Sick in the hospital)
+and the transition probabilities between the states. Also, work out the
+values for a, b, and c in the code below. We define state 1 as H, state
+2 as S_0, state 3 as S_H, and state 4 as D. Use the transition
+probabilities from the four-state Markov Chain above. Plot the states
+for a simulation for a single patient.
 
 ``` r
 set.seed(42) #set seed for reproducible results
@@ -85,7 +103,7 @@ for (day in 1:n_days) { #simulate for 700 days
 plot(1:n_days, patient_record, "l", main = "State Simulation Over 700 Days For One Patient")
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/extend_HMM_four_states-1.png)<!-- -->
 
 - The above line plot shows the simulation for a single patient over 700
   days based on the four-state Markov Chain Model.
@@ -98,6 +116,13 @@ plot(1:n_days, patient_record, "l", main = "State Simulation Over 700 Days For O
   H(0.001) and S0(0.01).
 
 ## Question 3
+
+Repeat the simulation for the four-state Markov Chain above for 1000
+patients, by extending your code from the previous question or
+otherwise. Choose an appropriate plot to display how long a patient
+spends in each state, on average. Also, calculate the average time spent
+in each state for the 1000 patients. Explain the results and what the
+selected plot shows.
 
 ### Code Extended for 1000 Patients
 
@@ -169,7 +194,7 @@ ggplot(data = average_time_df, aes(x = State, y = Freq, fill = State))+
   theme(legend.position = "none")
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/time_per_state_average-1.png)<!-- -->
 
 - The above barplot shows that on average a patient spends most time out
   of the 700 days in state 4 (dead).
@@ -181,7 +206,10 @@ ggplot(data = average_time_df, aes(x = State, y = Freq, fill = State))+
 
 ## Question 4
 
-Yes, you would expect to see a difference in the simulation if the
+Q: Comment if you expect to see a difference in the simulation if the
+starting state is changed to S_0, S_H, or D. Explain your reasoning.
+
+A: Yes, you would expect to see a difference in the simulation if the
 starting state was changed to S0, SH, or D. This is because the
 transition matrix has different probabilities for each of the states
 moving to a different state. For example, if you start in D, the patient
@@ -199,6 +227,18 @@ again, the simulation is more likely to end up looking similar.
 
 ## Question 5
 
+For this part of the coursework you will need the data file
+(assess_data_1224.Rdata), instructions to download the file can be found
+on the course canvas page. This file contains the following objects:
+
+Y: gene expression matrix with 4,568 genes (along the rows) and 30
+samples (along the columns) from 15 tumour-normal tissue pairs.
+patient_data: data.frame with metadata for each patient. You will
+perform the analysis in two steps, first you will look at the data to
+identify visually any problems with the data followed by a differential
+expression analysis to identify genes that are differentially expressed
+between tumour and normal tissue using regression.
+
 ``` r
 #load required packages
 library(tidyverse) #load tidyverse package for formatting, manipulating and visualising data
@@ -214,7 +254,7 @@ c_cl <- 15:30 #assign c_cl to a vector of integers from 15 to 30
 boxplot(log2(Y[, c_cl] + 1))
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/comment%20code-1.png)<!-- -->
 
 ``` r
 #x axis is samples 15 to 30. Sample 15 is tumour tissue but 16-30 are normal tissue. 
@@ -241,6 +281,11 @@ p_val <- summary(out)$coefficients[2, 4]
 
 ## Question 6 - Quality Control
 
+There is one problematic sample in the data, identify the problematic
+sample and explain why it is problematic. Provide evidence and/or a plot
+to support your answer. You could consider using some statistics on the
+data to identify the problematic sample or any other suitable approach.
+
 ``` r
 #find Problematic Sample
 #PCA to check for any outliers
@@ -260,7 +305,7 @@ ggplot(pca_result, aes(x = PC1, y = PC2, label = Sample)) + #plot PC1 against PC
   theme_minimal()
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/PCA_problematic_sample-1.png)<!-- -->
 
 - The PCA shows two clear clusters (Normal and Tumour) and one sample
   outlier.
@@ -274,14 +319,14 @@ boxplot(normalised_data,
   ylab = "Normalised Counts (log2 Counts)")
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/boxplot_problematic_sample-1.png)<!-- -->
 
 - Sample003 has a different distribution of normalised counts compared
   to the other samples.
 - The counts for Sample003 are all zero, showing this is the problematic
   sample.
 - Zero values could be because of technical issues during sequencing or
-  poor sequencing depth \[@zyla_evaluation_2023\].
+  poor sequencing depth (Zyla et al., 2023).
 
 ``` r
 library(dplyr)
@@ -293,6 +338,11 @@ patient_data <- patient_data %>% filter(sample_id != "Sample003")
 ```
 
 ## Question 7 - Differential Expression with a Single Covariate
+
+Using the code from Q5, perform a regression-based differential
+expression analysis between all normal and tumour samples using Poisson
+regression. Use the tissue type as the only covariate. Plot the
+appropriate log10 p-value from your analysis.
 
 ``` r
 #count number of rows in matrix to loop through each gene
@@ -376,7 +426,7 @@ ggplot(p_val_df, aes(x = idx, y = -log10(p_values), color = Expression)) +
       title = "Manhattan Plot")
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/DEG_analysis_single_pvals-1.png)<!-- -->
 
 - Above Manhattan plot shows significantly upregulated and downregulated
   genes plotted against their -log10 P value.
@@ -400,7 +450,7 @@ ggplot(p_val_df, aes(x = idx, y = -log10(p_values), color = Expression)) +
   of a read mapping to a specific gene.
 
 - Poisson regression assumes the variance and mean are equal, and does
-  not handle overdispersed data well\[@love_moderated_2014\].
+  not handle overdispersed data well(Love et al., 2014).
 
 - The data is overdispersed so the Poisson model has overfitted the
   data.
@@ -429,8 +479,7 @@ dispersion
     ##       3.2    1293.5    3845.7   19440.1   11343.6 2717460.2
 
 The data is clearly very overdispersed because the ratio of variance to
-mean is much greater than one across all the genes
-\[@openai_chatgpt_2024\].
+mean is much greater than one across all the genes (OpenAI, 2024b).
 
 ``` r
 #plot mean vs variance to visualise dispersion
@@ -445,7 +494,7 @@ ggplot(qc_data, aes(x = mean_counts, y = var_counts)) +
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/data_overdispersion_plot-1.png)<!-- -->
 
 - The above plot shows the relationship between mean and variance for
   the count data.
@@ -455,9 +504,17 @@ ggplot(qc_data, aes(x = mean_counts, y = var_counts)) +
 - The data is a good fit for the orange line which shows the variance as
   a quadratic function of the mean.
 - This shows the data is a good fit for the Negative Binomial
-  generalised linear model \[@love_moderated_2014\].
+  generalised linear model (Love et al., 2014).
 
 ## Question 8 - Differential Expression Analysis with Covariates Using DESEQ2
+
+Perform a regression-based analysis to identify genes differentially
+expressed between normal and tumour samples including the tissue
+variable indicating if it is tumour or normal sample. Plot the
+appropriate log 10p-value from your analysis.Compare the p-values with
+and without inclusion of the tissue type as a covariate, what do you
+observe? Which of the covariate has the biggest effect? Explain your
+answer with supporting plots, tables and further analysis if required.
 
 Here, I have investigated the null hypothesis that there is no
 significant difference in gene expression based on tissue type (normal
@@ -466,7 +523,7 @@ or tumour).
 I decided to use DESEQ2 package for this question because it has a
 function to normalise the data by library size, and uses negative
 binomial linear regression, which accounts for data overdispersion
-\[@mccarthy_differential_2012\].
+(McCarthy et al., 2012).
 
 How Deseq2 works: (1) Calculates normalisation factors for each sample
 to adjust counts for library depth of each sample. Uses median of ratios
@@ -580,7 +637,7 @@ kable(siggenes_no)
   statistic, adjusted for multiple testing.
 - Smaller Adjusted P values show stronger evidence against the null
   Hypothesis that there is no significant difference in expression based
-  on tissue type \[@piper_gene-level_2017\].
+  on tissue type (Piper, 2017b).
 - Log-fold change of greater than abs(0.4) means these genes are 4x
   differentially expressed between tissue type groups.
 - Adjusted p-value smaller than 0.001 means the probability this
@@ -601,7 +658,7 @@ ggplot(result_full, aes(x = log2FoldChange, y = -log10(padj), color = Expression
     labs(title = "Volcano Plot", x = "Log2 Fold Change", y = "-Log10 Adjusted P-value")
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/plot_degs-1.png)<!-- -->
 
 - This is a volcano plot displaying the results from the differential
   expression analysis.
@@ -633,7 +690,9 @@ if (!requireNamespace("pheatmap", quietly = TRUE)) {
   install.packages("pheatmap")
 }
 library(pheatmap)
+```
 
+``` r
 #heatmap of upregulated genes
 pheatmap(upregulated_counts ,
          cluster_rows = FALSE, #don't cluster based on genes
@@ -646,10 +705,10 @@ pheatmap(upregulated_counts ,
 )
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/heatmap_upregulated-1.png)<!-- -->
 
 - Above heatmap shows upregulated genes and which samples are tumour or
-  normal \[@openai_chatgpt_2024-1\].
+  normal (OpenAI, 2024a).
 - Rows are genes and columns are samples.
 - Colour corresponds to logFC in expression.
 - These are genes upregulated in tumour tissue samples and downregulated
@@ -671,10 +730,10 @@ pheatmap(downregulated_counts,
 )
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/heatmap_downregulated-1.png)<!-- -->
 
 - Above heatmap shows downregulated genes and which samples are tumour
-  or normal \[@openai_chatgpt_2024-1\].
+  or normal (OpenAI, 2024a).
 - Rows are genes and columns are samples.
 - Colour corresponds to logFC in expression.
 - These are genes upregulated in normal tissue samples and downregulated
@@ -746,7 +805,7 @@ ggplot(result_reduced, aes(x = log2FoldChange, y = -log10(padj), color = Express
     labs(title = "Volcano Plot", x = "Log2 Fold Change", y = "-Log10 Adjusted P-value")
 ```
 
-![](Maths_Coursework_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](Maths_Coursework_files/figure-gfm/degs_reduced_model-1.png)<!-- -->
 
 - Reduced model has 15 upregulated genes and 14 downregulated genes.
 - Reduced model shows a lot less genes upregulated/downregulated
@@ -951,6 +1010,12 @@ kable(siggenes_df)
 
 ## Question 9 - Interpretation
 
+Explain the results from the differential expression analysis. What do
+you observe from the p-values and the effect sizes? What is the effect
+of including the tissue type as a covariate? What is the effect of the
+library size on the analysis? You don’t need to perform any further
+analysis.
+
 - From the differential expression analysis using DESEQ, there is a
   large number of differentially expressed genes between the two tissue
   types when using the full model (tissue type and patient ID as
@@ -974,6 +1039,72 @@ kable(siggenes_df)
   bias. Without normalisation based on library size it is impossible to
   compare counts between samples.
 - DeSeq uses median of ratios method to normalise counts based on
-  library size \[@piper_count_2017\].
+  library size (Piper, 2017a).
 
 # Reference List
+
+<div id="refs" class="references csl-bib-body">
+
+<div id="ref-love_moderated_2014" class="csl-entry">
+
+Love, M.I., Huber, W. and Anders, S. (2014) Moderated estimation of fold
+change and dispersion for RNA-seq data with DESeq2. *Genome Biology*, 15
+(12): 550.
+doi:[10.1186/s13059-014-0550-8](https://doi.org/10.1186/s13059-014-0550-8).
+
+</div>
+
+<div id="ref-mccarthy_differential_2012" class="csl-entry">
+
+McCarthy, D.J., Chen, Y. and Smyth, G.K. (2012) Differential expression
+analysis of multifactor RNA-Seq experiments with respect to biological
+variation. *Nucleic Acids Research*, 40 (10): 4288–4297.
+doi:[10.1093/nar/gks042](https://doi.org/10.1093/nar/gks042).
+
+</div>
+
+<div id="ref-openai_chatgpt_2024-1" class="csl-entry">
+
+OpenAI (2024a) *ChatGPT, Response to the prompt "how to transform deseq
+normalised counts in r for visualisation with heatmap"*. Available at:
+<https://chat.openai.com/.>
+
+</div>
+
+<div id="ref-openai_chatgpt_2024" class="csl-entry">
+
+OpenAI (2024b) *ChatGPT, Response to the prompt "how to visualise
+overdispersion of count data in R"*. Available at:
+<https://chat.openai.com/.>
+
+</div>
+
+<div id="ref-piper_count_2017" class="csl-entry">
+
+Piper, M., Radhika Khetani (2017a) Count normalization with DESeq2.
+*Introduction to DGE - ARCHIVED*. Available at:
+<https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html>
+(Accessed: 12 December 2024).
+
+</div>
+
+<div id="ref-piper_gene-level_2017" class="csl-entry">
+
+Piper, M., Radhika Khetani (2017b) Gene-level differential expression
+analysis with DESeq2. *Introduction to DGE - ARCHIVED*. Available at:
+<https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html>
+(Accessed: 12 December 2024).
+
+</div>
+
+<div id="ref-zyla_evaluation_2023" class="csl-entry">
+
+Zyla, J., Papiez, A., Zhao, J., et al. (2023) Evaluation of zero counts
+to better understand the discrepancies between bulk and single-cell
+RNA-Seq platforms. *Computational and Structural Biotechnology Journal*,
+21: 4663–4674.
+doi:[10.1016/j.csbj.2023.09.035](https://doi.org/10.1016/j.csbj.2023.09.035).
+
+</div>
+
+</div>
