@@ -4,7 +4,7 @@ Amy Duguid
 
 # Part 1: Simulate Markov Chains
 
-\##Introduction
+## Introduction
 
 In this first exercise, we will look at a simple model for a
 hypothetical disease where there are two stages of sickness, the first

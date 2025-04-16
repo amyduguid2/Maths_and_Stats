@@ -25,7 +25,7 @@ library(RColorBrewer)
 
 # Part 1: Simulate Markov Chains
 
-##Introduction
+## Introduction
 
 In this first exercise, we will look at a simple model for a hypothetical disease where there are two stages of sickness, the first where the sickness can be managed at home, and the second where the patient needs to be hospitalized. This is represented by the following Markov Chain. You will go through creating simulations based on this Markov Chain.
 
