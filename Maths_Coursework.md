@@ -4,12 +4,14 @@ Amy Duguid
 
 # Part 1: Simulate Markov Chains
 
-\##Introduction In this first exercise, we will look at a simple model
-for a hypothetical disease where there are two stages of sickness, the
-first where the sickness can be managed at home, and the second where
-the patient needs to be hospitalized. This is represented by the
-following Markov Chain. You will go through creating simulations based
-on this Markov Chain.
+\##Introduction
+
+In this first exercise, we will look at a simple model for a
+hypothetical disease where there are two stages of sickness, the first
+where the sickness can be managed at home, and the second where the
+patient needs to be hospitalized. This is represented by the following
+Markov Chain. You will go through creating simulations based on this
+Markov Chain.
 
 Here is the Markov Chain for the disease, where the states are Healthy
 (H), Sick at home (S_0), Sick in the hospital (S_H), and the Dead state
